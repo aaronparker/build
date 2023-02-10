@@ -1,0 +1,23 @@
+{
+    "cSpell.words": [
+        "Addin",
+        "ALLUSER",
+        "Audiosrv",
+        "AUTOACTIVATE",
+        "captutre",
+        "CHROMEEXT",
+        "Codecov",
+        "DISABLEDESKTOPSHORTCUT",
+        "DONOTCREATEDESKTOPSHORTCUT",
+        "DWORD",
+        "Hotfixes",
+        "Lync",
+        "Nerdio",
+        "RUNAPPLICATION",
+        "Shortpath",
+        "THUMBNAILPREVIEW",
+        "windowsdesktop",
+        "zyborg"
+    ],
+    "pester.autoRunOnSave": false
+}
