@@ -11,10 +11,10 @@ BeforeDiscovery {
 
     # Get the working directory
     if ([System.String]::IsNullOrWhiteSpace($Env:GITHUB_WORKSPACE)) {
-        $Path = [System.IO.Path]::Combine($PWD.Path, "scripts", "tweaks")
+        $Path = [System.IO.Path]::Combine($PWD.Path, "tweaks")
     }
     else {
-        $Path = [System.IO.Path]::Combine($Env:GITHUB_WORKSPACE, "scripts", "tweaks")
+        $Path = [System.IO.Path]::Combine($Env:GITHUB_WORKSPACE, "tweaks")
     }
 
     # Get the scripts to test

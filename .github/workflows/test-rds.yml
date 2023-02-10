@@ -4,9 +4,8 @@ on:
   workflow_dispatch:
   push:
     paths:
-      - 'scripts/image/*.ps1'
-      - 'scripts/tweaks/*.ps1'
-      - 'scripts/uninstall/*.ps1'
+      - 'rds/*.ps1'
+      - 'tweaks/*.ps1'
       - 'tests/*.ps1'
       - '.github/workflows/test-rds.yml'
   schedule:
@@ -57,7 +56,7 @@ jobs:
           $Config.Run.Path = "$Env:GITHUB_WORKSPACE\tests"
           $Config.Run.PassThru = $True
           $Config.CodeCoverage.Enabled = $True
-          $Config.CodeCoverage.Path = "$Env:GITHUB_WORKSPACE\scripts"
+          $Config.CodeCoverage.Path = "$Env:GITHUB_WORKSPACE\rds"
           $Config.CodeCoverage.OutputFormat = "JaCoCo"
           $Config.CodeCoverage.OutputPath = "$Env:GITHUB_WORKSPACE\CodeCoverage.xml"
           $Config.TestResult.Enabled = $True
