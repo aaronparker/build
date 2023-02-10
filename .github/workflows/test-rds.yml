@@ -86,7 +86,7 @@ jobs:
         if: always()
         uses: codecov/codecov-action@v3
         with:
-          token: ${{ secrets.CODECOV_TOKEN }}
+          #token: ${{ secrets.CODECOV_TOKEN }}
           files: ./CodeCoverage.xml
           verbose: true
 
