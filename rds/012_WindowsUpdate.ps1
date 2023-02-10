@@ -1,4 +1,4 @@
-#description: Installs Windows Updates
+#description: Installs all available Windows updates with PSWindowsUpdate
 #execution mode: IndividualWithRestart
 #tags: Update, Image
 #Requires -Modules PSWindowsUpdate
@@ -8,6 +8,7 @@ try {
     reg delete "HKLM\SOFTWARE\Policies\Microsoft\Windows\WindowsUpdate\AU" /f | Out-Null
 
     # Install updates
+    Write-Information -MessageData ":: Installing Windows updates" -InformationAction "Continue"
     Import-Module -Name "PSWindowsUpdate"
     Install-WindowsUpdate -AcceptAll -MicrosoftUpdate -IgnoreReboot
 }

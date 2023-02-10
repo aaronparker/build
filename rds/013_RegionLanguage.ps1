@@ -1,4 +1,4 @@
-#description: Installs Windows language support. Set language/regional settings
+#description: Installs Windows language support and sets language/regional settings. Note that this script enables WinRM and PS Remoting to fix an issue with VM deployment using non en-US language packs
 #execution mode: Combined
 #tags: Language, Image
 
@@ -11,7 +11,15 @@ else {
 }
 #endregion
 
-# Only run if the LanguagePackManagement module is installed
+#region Enable the WinRM rule as a workaround for VM provisioning DSC failure with: "Unable to check the status of the firewall"
+# https://github.com/Azure/RDS-Templates/issues/435
+# https://qiita.com/fujinon1109/items/440c614338fe2535b09e
+Write-Information -MessageData "Enable-NetFirewallRule 'Windows Remote Management'" -InformationAction "Continue"
+Get-NetFirewallRule -DisplayGroup "Windows Remote Management" | Enable-NetFirewallRule
+Enable-PSRemoting -Force
+#endregion
+
+#region Only run if the LanguagePackManagement module is installed
 if (Get-Module -Name "LanguagePackManagement" -ListAvailable) {
     try {
         $params = @{
@@ -19,6 +27,7 @@ if (Get-Module -Name "LanguagePackManagement" -ListAvailable) {
             CopyToSettings  = $true
             ExcludeFeatures = $false
         }
+        Write-Information -MessageData ":: Install language pack for: $Language" -InformationAction "Continue"
         Install-Language @params | Out-Null
     }
     catch {
@@ -30,13 +39,16 @@ if (Get-Module -Name "LanguagePackManagement" -ListAvailable) {
             Language = $Language
             PassThru = $false
         }
+        Write-Information -MessageData ":: Set system UI language to: $Language" -InformationAction "Continue"
         Set-SystemPreferredUILanguage @params
     }
     catch {
         throw $_.Exception.Message
     }
 }
+#endregion
 
+#region Set the locale
 try {
     $GeoId = @{
         "en-US" = 244
@@ -47,9 +59,11 @@ try {
         "ph-PH" = 201
     }
     Import-Module -Name "International"
+    Write-Information -MessageData ":: Set locale to: $Language" -InformationAction "Continue"
     Set-WinSystemLocale -SystemLocale $Language
     Set-WinHomeLocation -GeoId $GeoId.$Language
 }
 catch {
     throw $_.Exception.Message
 }
+#endregion

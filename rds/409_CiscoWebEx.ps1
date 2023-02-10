@@ -2,38 +2,41 @@
 #execution mode: Combined
 #tags: Evergreen, Cisco, WebEx
 #Requires -Modules Evergreen
-[System.String] $Path = "$env:SystemDrive\Apps\Cisco\WebEx"
+[System.String] $Path = "$Env:SystemDrive\Apps\Cisco\WebEx"
 
+# https://www.webex.com/downloads/teams-vdi.html
 # https://www.cisco.com/c/en/us/td/docs/voice_ip_comm/cloudCollaboration/wbxt/vdi/wbx-vdi-deployment-guide/wbx-teams-vdi-deployment_chapter_010.html
 
 #region Script logic
 New-Item -Path $Path -ItemType "Directory" -Force -ErrorAction "SilentlyContinue" | Out-Null
-New-Item -Path "$env:ProgramData\Evergreen\Logs" -ItemType "Directory" -Force -ErrorAction "SilentlyContinue" | Out-Null
+New-Item -Path "$Env:ProgramData\Evergreen\Logs" -ItemType "Directory" -Force -ErrorAction "SilentlyContinue" | Out-Null
 
 try {
     $App = [PSCustomObject]@{
-        Version = "42.10.0.23814"
-        URI = "https://binaries.webex.com/vdi-hvd-aws-gold/20221008081418/Webex.msi"
+        Version = "42.12.0.24485"
+        URI = "https://binaries.webex.com/vdi-hvd-aws-gold/20221208010500/Webex.msi"
     }
     $OutFile = Save-EvergreenApp -InputObject $App -CustomPath $Path -WarningAction "SilentlyContinue"
 }
 catch {
-    throw $_
+    throw $_.Exception.Message
 }
 
 try {
-    $LogFile = "$env:ProgramData\Evergreen\Logs\CiscoWebEx$($App.Version).log" -replace " ", ""
+    $LogFile = "$Env:ProgramData\Evergreen\Logs\CiscoWebEx$($App.Version).log" -replace " ", ""
     $params = @{
-        FilePath     = "$env:SystemRoot\System32\msiexec.exe"
-        ArgumentList = "/package `"$($OutFile.FullName)`" ALLUSERS=1 ENABLEVDI=2 AUTOUPGRADEENABLED=0 ROAMINGENABLED=1 /quiet /log $LogFile"
+        FilePath     = "$Env:SystemRoot\System32\msiexec.exe"
+        ArgumentList = "/package `"$($OutFile.FullName)`" ENABLEVDI=2 AUTOUPGRADEENABLED=0 ROAMINGENABLED=1 ALLUSERS=1 /quiet /log $LogFile"
         NoNewWindow  = $true
         Wait         = $true
-        PassThru     = $false
+        PassThru     = $true
+        ErrorAction  = "Continue"
     }
     $result = Start-Process @params
+    Write-Information -MessageData ":: Install exit code: $($result.ExitCode)" -InformationAction "Continue"
 }
 catch {
-    throw "Exit code: $($result.ExitCode); Error: $($_.Exception.Message)"
+    throw $_.Exception.Message
 }
 
 Start-Sleep -Seconds 5

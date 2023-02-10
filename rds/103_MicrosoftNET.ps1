@@ -1,37 +1,41 @@
-#description: Installs the Microsoft .NET Desktop Runtime
+#description: Installs the Microsoft .NET Desktop LTS and Current Runtimes
 #execution mode: Combined
 #tags: Evergreen, Microsoft, .NET
 #Requires -Modules Evergreen
-[System.String] $Path = "$env:SystemDrive\Apps\Microsoft\NET"
+[System.String] $Path = "$Env:SystemDrive\Apps\Microsoft\NET"
 
 #region Script logic
 New-Item -Path $Path -ItemType "Directory" -Force -ErrorAction "SilentlyContinue" | Out-Null
-New-Item -Path "$env:ProgramData\Evergreen\Logs" -ItemType "Directory" -Force -ErrorAction "SilentlyContinue" | Out-Null
+New-Item -Path "$Env:ProgramData\Evergreen\Logs" -ItemType "Directory" -Force -ErrorAction "SilentlyContinue" | Out-Null
 
 try {
     # Download
     Import-Module -Name "Evergreen" -Force
-    $App = Invoke-EvergreenApp -Name "Microsoft.NET" | Where-Object { $_.Installer -eq "windowsdesktop" -and $_.Architecture -eq "x64" -and $_.Channel -match "LTS|Current" }
+    $App = Invoke-EvergreenApp -Name "Microsoft.NET" | `
+        Where-Object { $_.Installer -eq "windowsdesktop" -and $_.Architecture -eq "x64" -and $_.Channel -match "LTS|Current" }
     $OutFile = Save-EvergreenApp -InputObject $App -CustomPath $Path -WarningAction "SilentlyContinue"
 }
 catch {
-    throw $_
+    throw $_.Exception.Message
 }
 
-try {
-    foreach ($file in $OutFile) {
-        $LogFile = "$env:ProgramData\Evergreen\Logs\Microsoft.NET.log" -replace " ", ""
+Write-Information -MessageData ":: Install Microsoft .NET" -InformationAction "Continue"
+foreach ($file in $OutFile) {
+    try {
+        $LogFile = "$Env:ProgramData\Evergreen\Logs\Microsoft.NET.log" -replace " ", ""
         $params = @{
             FilePath     = $file.FullName
             ArgumentList = "/install /quiet /norestart /log $LogFile"
             NoNewWindow  = $true
-            PassThru     = $false
+            PassThru     = $true
             Wait         = $true
+            ErrorAction  = "Continue"
         }
         $result = Start-Process @params
+        Write-Information -MessageData ":: Install exit code: $($result.ExitCode)" -InformationAction "Continue"
     }
-}
-catch {
-    throw "Exit code: $($result.ExitCode); Error: $($_.Exception.Message)"
+    catch {
+        throw $_.Exception.Message
+    }
 }
 #endregion

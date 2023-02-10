@@ -1,8 +1,8 @@
-#description: Installs Windows Customised Defaults to customise the image and the default profile
+#description: Installs Windows Customised Defaults to customise the image and the default profile https://stealthpuppy.com/image-customise/
 #execution mode: Combined
 #tags: Evergreen, Customisation, Language, Image
 #Requires -Modules Evergreen
-[System.String] $Path = "$env:SystemDrive\Apps\image-customise"
+[System.String] $Path = "$Env:SystemDrive\Apps\image-customise"
 
 #region Use Secure variables in Nerdio Manager to pass variables
 if ($null -eq $SecureVars.OSLanguage) {
@@ -24,12 +24,14 @@ else {
 New-Item -Path $Path -ItemType "Directory" -Force -ErrorAction "SilentlyContinue" | Out-Null
 
 try {
+    Write-Information -MessageData ":: Install Windows Customised Defaults" -InformationAction "Continue"
     $Installer = Invoke-EvergreenApp -Name "stealthpuppyWindowsCustomisedDefaults" | Where-Object { $_.Type -eq "zip" } | `
         Select-Object -First 1 | `
         Save-EvergreenApp -CustomPath $Path
     Expand-Archive -Path $Installer.FullName -DestinationPath $Path -Force
-    Push-Location -Path $Path
-    . .\Install-Defaults.ps1 -Language $Language -AppxMode $AppxMode
+    $InstallFile = Get-ChildItem -Path $Path -Recurse -Include "Install-Defaults.ps1"
+    Push-Location -Path $InstallFile.Directory
+    & .\Install-Defaults.ps1 -Language $Language -AppxMode $AppxMode
     Pop-Location
 }
 catch {

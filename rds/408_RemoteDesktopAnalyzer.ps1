@@ -2,18 +2,19 @@
 #execution mode: Combined
 #tags: Evergreen, Remote Display Analyzer, Tools
 #Requires -Modules Evergreen
-[System.String] $Path = "$env:ProgramFiles\RemoteDisplayAnalyzer"
+[System.String] $Path = "$Env:ProgramFiles\RemoteDisplayAnalyzer"
 
 #region Script logic
 New-Item -Path $Path -ItemType "Directory" -Force -ErrorAction "SilentlyContinue" | Out-Null
-New-Item -Path "$env:ProgramData\Evergreen\Logs" -ItemType "Directory" -Force -ErrorAction "SilentlyContinue" | Out-Null
+New-Item -Path "$Env:ProgramData\Evergreen\Logs" -ItemType "Directory" -Force -ErrorAction "SilentlyContinue" | Out-Null
 
 try {
+    Write-Information -MessageData ":: Download Remote Desktop Analyzer" -InformationAction "Continue"
     Import-Module -Name "Evergreen" -Force
     $App = Invoke-EvergreenApp -Name "RDAnalyzer" | Select-Object -First 1
     Save-EvergreenApp -InputObject $App -CustomPath $Path -Force -WarningAction "SilentlyContinue" | Out-Null
 }
 catch {
-    throw $_
+    throw $_.Exception.Message
 }
 #endregion

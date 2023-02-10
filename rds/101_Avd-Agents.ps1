@@ -2,11 +2,11 @@
 #execution mode: Combined
 #tags: Evergreen, Microsoft, AVD
 #Requires -Modules Evergreen
-[System.String] $Path = "$env:SystemDrive\Apps\Microsoft\Avd"
+[System.String] $Path = "$Env:SystemDrive\Apps\Microsoft\Avd"
 
 #region Script logic
 New-Item -Path $Path -ItemType "Directory" -Force -ErrorAction "SilentlyContinue" | Out-Null
-New-Item -Path "$env:ProgramData\Evergreen\Logs" -ItemType "Directory" -Force -ErrorAction "SilentlyContinue" | Out-Null
+New-Item -Path "$Env:ProgramData\Evergreen\Logs" -ItemType "Directory" -Force -ErrorAction "SilentlyContinue" | Out-Null
 
 # Run tasks/install apps
 #region Microsoft Remote Desktop WebRTC Redirector Service
@@ -16,23 +16,26 @@ try {
     $OutFile = Save-EvergreenApp -InputObject $App -CustomPath $Path -WarningAction "SilentlyContinue"
 }
 catch {
-    throw $_
+    throw $_.Exception.Message
 }
 
 try {
     # Install RTC
-    $LogFile = "$env:ProgramData\Evergreen\Logs\MicrosoftWvdRtcService$($App.Version).log" -replace " ", ""
+    Write-Information -MessageData ":: Install Microsoft Remote Desktop WebRTC Redirector Service" -InformationAction "Continue"
+    $LogFile = "$Env:ProgramData\Evergreen\Logs\MicrosoftWvdRtcService$($App.Version).log" -replace " ", ""
     $params = @{
-        FilePath     = "$env:SystemRoot\System32\msiexec.exe"
+        FilePath     = "$Env:SystemRoot\System32\msiexec.exe"
         ArgumentList = "/package `"$($OutFile.FullName)`" /quiet /log $LogFile"
         NoNewWindow  = $true
         Wait         = $true
-        PassThru     = $false
+        PassThru     = $true
+        ErrorAction  = "Continue"
     }
     $result = Start-Process @params
+    Write-Information -MessageData ":: Install exit code: $($result.ExitCode)" -InformationAction "Continue"
 }
 catch {
-    throw "Exit code: $($result.ExitCode); Error: $($_.Exception.Message)"
+    throw $_.Exception.Message
 }
 #endregion
 
@@ -43,67 +46,25 @@ try {
     $OutFile = Save-EvergreenApp -InputObject $App -CustomPath $Path -WarningAction "SilentlyContinue"
 }
 catch {
-    throw $_
+    throw $_.Exception.Message
 }
 
 try {
     # Install MMR
-    $LogFile = "$env:ProgramData\Evergreen\Logs\MicrosoftWvdMultimediaRedirection$($App.Version).log" -replace " ", ""
+    Write-Information -MessageData ":: Install Microsoft Azure Virtual Desktop Multimedia Redirection Extensions" -InformationAction "Continue"
+    $LogFile = "$Env:ProgramData\Evergreen\Logs\MicrosoftWvdMultimediaRedirection$($App.Version).log" -replace " ", ""
     $params = @{
-        FilePath     = "$env:SystemRoot\System32\msiexec.exe"
+        FilePath     = "$Env:SystemRoot\System32\msiexec.exe"
         ArgumentList = "/package `"$($OutFile.FullName)`" /quiet /log $LogFile"
         NoNewWindow  = $true
         Wait         = $true
-        PassThru     = $false
+        PassThru     = $true
+        ErrorAction  = "Continue"
     }
     $result = Start-Process @params
+    Write-Information -MessageData ":: Install exit code: $($result.ExitCode)" -InformationAction "Continue"
 }
 catch {
-    throw "Exit code: $($result.ExitCode); Error: $($_.Exception.Message)"
+    throw $_.Exception.Message
 }
-#endregion
-
-
-# The items below should be installed automatically
-#region Boot Loader
-<#
-try {
-$App = Invoke-EvergreenApp -Name "MicrosoftWvdBootLoader" | Where-Object { $_.Architecture -eq "x64" } | Select-Object -First 1
-$OutFile = Save-EvergreenApp -InputObject $App -CustomPath $Path -WarningAction "SilentlyContinue"
-
-# Install
-$params = @{
-    FilePath     = "$env:SystemRoot\System32\msiexec.exe"
-    ArgumentList = "/package `"$($OutFile.FullName)`" /quiet `"$env:ProgramData\Evergreen\Logs\MicrosoftWvdBootLoader.log`""
-    NoNewWindow  = $true
-    Wait         = $true
-    PassThru     = $false
-}
-$params
-Start-Process @params
-}
-catch {
-    throw "Exit code: $($result.ExitCode); Error: $($_.Exception.Message)"
-}
-#>
-#endregion
-
-#region Infra agent
-<#
-try {
-$App = Invoke-EvergreenApp -Name "MicrosoftWvdInfraAgent" | Where-Object { $_.Architecture -eq "x64" }
-$OutFile = Save-EvergreenApp -InputObject $App -Path $Path -WarningAction "SilentlyContinue"
-$params = @{
-    FilePath     = "$env:SystemRoot\System32\msiexec.exe"
-    ArgumentList = "/package $($OutFile.FullName) /quiet `"$env:ProgramData\Evergreen\Logs\MicrosoftWvdInfraAgent.log`""
-    NoNewWindow  = $true
-    Wait         = $true
-    PassThru     = $false
-}
-Start-Process @params
-}
-catch {
-    throw "Exit code: $($result.ExitCode); Error: $($_.Exception.Message)"
-}
-#>
 #endregion

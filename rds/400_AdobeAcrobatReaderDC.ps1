@@ -2,13 +2,13 @@
 #execution mode: Combined
 #tags: Evergreen, Adobe, Acrobat, PDF
 #Requires -Modules Evergreen
-[System.String] $Path = "$env:SystemDrive\Apps\Adobe\AcrobatReaderDC"
+[System.String] $Path = "$Env:SystemDrive\Apps\Adobe\AcrobatReaderDC"
 [System.String] $Architecture = "x64"
 [System.String] $Language = "MUI"
 
 #region Script logic
 New-Item -Path $Path -ItemType "Directory" -Force -ErrorAction "SilentlyContinue" | Out-Null
-New-Item -Path "$env:ProgramData\Evergreen\Logs" -ItemType "Directory" -Force -ErrorAction "SilentlyContinue" | Out-Null
+New-Item -Path "$Env:ProgramData\Evergreen\Logs" -ItemType "Directory" -Force -ErrorAction "SilentlyContinue" | Out-Null
 
 # Run tasks/install apps
 # Enforce settings with GPO: https://www.adobe.com/devnet-docs/acrobatetk/tools/AdminGuide/gpo.html
@@ -16,29 +16,38 @@ New-Item -Path "$env:ProgramData\Evergreen\Logs" -ItemType "Directory" -Force -E
 try {
     # Download Reader installer
     Import-Module -Name "Evergreen" -Force
-    $App = Invoke-EvergreenApp -Name "AdobeAcrobatReaderDC" | Where-Object { $_.Language -eq $Language -and $_.Architecture -eq $Architecture } | `
+    $App = Invoke-EvergreenApp -Name "AdobeAcrobatReaderDC" | `
+        Where-Object { $_.Language -eq $Language -and $_.Architecture -eq $Architecture } | `
         Select-Object -First 1
     $OutFile = Save-EvergreenApp -InputObject $App -CustomPath $Path -WarningAction "SilentlyContinue"
 }
 catch {
-    throw $_
+    throw $_.Exception.Message
 }
 
 try {
     # Install Adobe Acrobat Reader
-    $LogFile = "$env:ProgramData\Evergreen\Logs\AdobeAcrobatReaderDC$($App.Version).log" -replace " ", ""
-    $ArgumentList = "-sfx_nu /sALL /rps /l /msi EULA_ACCEPT=YES ENABLE_CHROMEEXT=0 DISABLE_BROWSER_INTEGRATION=1 ENABLE_OPTIMIZATION=YES ADD_THUMBNAILPREVIEW=0 DISABLEDESKTOPSHORTCUT=1 /log $LogFile"
+    $LogFile = "$Env:ProgramData\Evergreen\Logs\AdobeAcrobatReaderDC$($App.Version).log" -replace " ", ""
+    $Options = "EULA_ACCEPT=YES
+        ENABLE_CHROMEEXT=0
+        DISABLE_BROWSER_INTEGRATION=1
+        ENABLE_OPTIMIZATION=YES
+        ADD_THUMBNAILPREVIEW=0
+        DISABLEDESKTOPSHORTCUT=1"
+    $ArgumentList = "-sfx_nu /sALL /rps /l /msi $($Options -replace "\s+", " ") /log $LogFile"
     $params = @{
         FilePath     = $OutFile.FullName
         ArgumentList = $ArgumentList
         NoNewWindow  = $true
         Wait         = $true
-        PassThru     = $false
+        PassThru     = $true
+        ErrorAction  = "Continue"
     }
     $result = Start-Process @params
+    Write-Information -MessageData ":: Install exit code: $($result.ExitCode)" -InformationAction "Continue"
 }
 catch {
-    throw "Exit code: $($result.ExitCode); Error: $($_.Exception.Message)"
+    throw $_.Exception.Message
 }
 
 try {

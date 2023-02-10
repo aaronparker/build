@@ -2,11 +2,11 @@
 #execution mode: Combined
 #tags: Evergreen, Microsoft, PowerToys
 #Requires -Modules Evergreen
-[System.String] $Path = "$env:SystemDrive\Apps\Microsoft\PowerToys"
+[System.String] $Path = "$Env:SystemDrive\Apps\Microsoft\PowerToys"
 
 #region Script logic
 New-Item -Path $Path -ItemType "Directory" -Force -ErrorAction "SilentlyContinue" | Out-Null
-New-Item -Path "$env:ProgramData\Evergreen\Logs" -ItemType "Directory" -Force -ErrorAction "SilentlyContinue" | Out-Null
+New-Item -Path "$Env:ProgramData\Evergreen\Logs" -ItemType "Directory" -Force -ErrorAction "SilentlyContinue" | Out-Null
 
 try {
     Import-Module -Name "Evergreen" -Force
@@ -14,22 +14,24 @@ try {
     $OutFile = Save-EvergreenApp -InputObject $App -CustomPath $Path -WarningAction "SilentlyContinue"
 }
 catch {
-    throw $_
+    throw $_.Exception.Message
 }
 
 try {
-    $LogFile = "$env:ProgramData\Evergreen\Logs\MicrosoftPowerToys$($App.Version).log" -replace " ", ""
+    $LogFile = "$Env:ProgramData\Evergreen\Logs\MicrosoftPowerToys$($App.Version).log" -replace " ", ""
     $params = @{
         FilePath     = $OutFile.FullName
         ArgumentList = "-silent -log $LogFile"
         NoNewWindow  = $true
         Wait         = $true
-        PassThru     = $false
+        PassThru     = $true
+        ErrorAction  = "Continue"
     }
     $result = Start-Process @params
+    Write-Information -MessageData ":: Install exit code: $($result.ExitCode)" -InformationAction "Continue"
 }
 catch {
-    throw "Exit code: $($result.ExitCode); Error: $($_.Exception.Message)"
+    throw $_.Exception.Message
 }
 
 # Disable features that aren't suitable for VDI
@@ -42,4 +44,9 @@ reg add "HKLM\Software\Policies\PowerToys" /v "ConfigureEnabledUtilityFileExplor
 reg add "HKLM\Software\Policies\PowerToys" /v "ConfigureEnabledUtilityFileExplorerPDFPreview" /d 0 /t "REG_DWORD" /f | Out-Null
 reg add "HKLM\Software\Policies\PowerToys" /v "ConfigureEnabledUtilityFileLocksmith" /d 0 /t "REG_DWORD" /f | Out-Null
 reg add "HKLM\Software\Policies\PowerToys" /v "ConfigureEnabledUtilityVideoConferenceMute" /d 0 /t "REG_DWORD" /f | Out-Null
+
+Start-Sleep -Seconds 5
+Get-Process -ErrorAction "SilentlyContinue" | `
+    Where-Object { $_.Path -like "$Env:ProgramFiles\PowerToys\*" } | `
+    Stop-Process -Force -ErrorAction "SilentlyContinue"
 #endregion

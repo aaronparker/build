@@ -1,8 +1,8 @@
-#description: Installs the latest version of ImageGlass 64-bit
+#description: Installs the latest version of Paint.NET 64-bit with automatic update disabled
 #execution mode: Combined
-#tags: Evergreen, ImageGlass
+#tags: Evergreen, Paint.NET
 #Requires -Modules Evergreen
-[System.String] $Path = "$Env:SystemDrive\Apps\ImageGlass"
+[System.String] $Path = "$Env:SystemDrive\Apps\Paint.NET"
 
 #region Script logic
 New-Item -Path $Path -ItemType "Directory" -Force -ErrorAction "SilentlyContinue" | Out-Null
@@ -10,7 +10,8 @@ New-Item -Path "$Env:ProgramData\Evergreen\Logs" -ItemType "Directory" -Force -E
 
 try {
     Import-Module -Name "Evergreen" -Force
-    $App = Invoke-EvergreenApp -Name "ImageGlass" | Where-Object { $_.Architecture -eq "x64" -and $_.Type -eq "msi" } | Select-Object -First 1
+    $App = Invoke-EvergreenApp -Name "PaintDotNetOfflineInstaller" | `
+        Where-Object { $_.Architecture -eq "x64" -and $_.URI -match "winmsi" } | Select-Object -First 1
     $OutFile = Save-EvergreenApp -InputObject $App -CustomPath $Path -WarningAction "SilentlyContinue"
 }
 catch {
@@ -18,10 +19,22 @@ catch {
 }
 
 try {
-    $LogFile = "$Env:ProgramData\Evergreen\Logs\ImageGlass$($App.Version).log" -replace " ", ""
+    $params = @{
+        Path            = $OutFile.FullName
+        DestinationPath = $Path
+    }
+    Expand-Archive @params
+}
+catch {
+    throw $_.Exception.Message
+}
+
+try {
+    $Installer = Get-ChildItem -Path $Path -Include "paint*.msi" -Recurse
+    $LogFile = "$Env:ProgramData\Evergreen\Logs\Paint.NET$($App.Version).log" -replace " ", ""
     $params = @{
         FilePath     = "$Env:SystemRoot\System32\msiexec.exe"
-        ArgumentList = "/package `"$($OutFile.FullName)`" RUNAPPLICATION=0 ALLUSERS=1 /quiet /log $LogFile"
+        ArgumentList = "/package `"$($Installer.FullName)`" DESKTOPSHORTCUT=0 CHECKFORUPDATES=0 CHECKFORBETAS=0 /quiet /log $LogFile"
         NoNewWindow  = $true
         Wait         = $true
         PassThru     = $true
@@ -35,8 +48,6 @@ catch {
 }
 
 Start-Sleep -Seconds 5
-$Shortcuts = @("$Env:Public\Desktop\ImageGlass.lnk",
-    "$Env:ProgramData\Microsoft\Windows\Start Menu\Programs\ImageGlass\ImageGlass' LICENSE.lnk",
-    "$Env:ProgramData\Microsoft\Windows\Start Menu\Programs\ImageGlass\Uninstall ImageGlass*.lnk")
+$Shortcuts = @("$Env:Public\Desktop\Paint.NET.lnk")
 Remove-Item -Path $Shortcuts -Force -ErrorAction "Ignore"
 #endregion

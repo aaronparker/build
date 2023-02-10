@@ -2,10 +2,18 @@
 #execution mode: Combined
 #tags: Evergreen, Microsoft, Microsoft 365 Apps
 #Requires -Modules Evergreen
-[System.String] $Path = "$env:SystemDrive\Apps\Microsoft\Office"
+[System.String] $Path = "$Env:SystemDrive\Apps\Microsoft\Office"
 
-#[ValidateSet("BetaChannel", "CurrentPreview", "Current", "MonthlyEnterprise", "PerpetualVL2021", "SemiAnnualPreview", "SemiAnnual", "PerpetualVL2019")]
-[System.String] $Channel = "MonthlyEnterprise"
+#region Use Secure variables in Nerdio Manager to pass variables
+if ($null -eq $SecureVars.M365Channel) {
+    #[ValidateSet("BetaChannel", "CurrentPreview", "Current", "MonthlyEnterprise", "PerpetualVL2021", "SemiAnnualPreview", "SemiAnnual", "PerpetualVL2019")]
+    [System.String] $Channel = "MonthlyEnterprise"
+}
+else {
+    [System.String] $Channel = $SecureVars.M365Channel
+}
+#endregion
+
 
 #region Script logic
 New-Item -Path $Path -ItemType "Directory" -Force -ErrorAction "SilentlyContinue" | Out-Null
@@ -37,7 +45,6 @@ switch -Regex ((Get-CimInstance -ClassName "CIM_OperatingSystem").Caption) {
         $SharedComputerLicensing = 1
     }
 }
-
 
 try {
     # Set the Microsoft 365 Apps configuration
@@ -134,24 +141,27 @@ try {
     $OutFile = Save-EvergreenApp -InputObject $App -CustomPath $Path -WarningAction "SilentlyContinue"
 }
 catch {
-    throw $_
+    throw $_.Exception.Message
 }
 
 try {
     # Install package
+    Write-Information -MessageData ":: Install Microsoft 365 Apps" -InformationAction "Continue"
     $params = @{
         FilePath     = $OutFile.FullName
         ArgumentList = "/configure $XmlFile"
         NoNewWindow  = $true
         Wait         = $true
-        PassThru     = $false
+        PassThru     = $true
+        ErrorAction  = "Continue"
     }
     Push-Location -Path $Path
     $result = Start-Process @params
+    Write-Information -MessageData ":: Install exit code: $($result.ExitCode)" -InformationAction "Continue"
     Pop-Location
 }
 catch {
-    throw "Exit code: $($result.ExitCode); Error: $($_.Exception.Message)"
+    throw $_.Exception.Message
 }
 finally {
     Pop-Location

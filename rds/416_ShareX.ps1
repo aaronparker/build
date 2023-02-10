@@ -1,8 +1,8 @@
-#description: Installs the latest Microsoft Visual Studio Code 64-bit
+#description: Installs the latest version of ShareX
 #execution mode: Combined
-#tags: Evergreen, Microsoft, Visual Studio Code
+#tags: Evergreen, ShareX
 #Requires -Modules Evergreen
-[System.String] $Path = "$Env:SystemDrive\Apps\Microsoft\VisualStudioCode"
+[System.String] $Path = "$Env:SystemDrive\Apps\ShareX"
 
 #region Script logic
 New-Item -Path $Path -ItemType "Directory" -Force -ErrorAction "SilentlyContinue" | Out-Null
@@ -10,8 +10,7 @@ New-Item -Path "$Env:ProgramData\Evergreen\Logs" -ItemType "Directory" -Force -E
 
 try {
     Import-Module -Name "Evergreen" -Force
-    $App = Invoke-EvergreenApp -Name "MicrosoftVisualStudioCode" | `
-        Where-Object { $_.Architecture -eq "x64" -and $_.Platform -eq "win32-x64" -and $_.Channel -eq "Stable" } | Select-Object -First 1
+    $App = Get-EvergreenApp -Name "ShareX" | Where-Object { $_.Type -eq "exe" } | Select-Object -First 1
     $OutFile = Save-EvergreenApp -InputObject $App -CustomPath $Path -WarningAction "SilentlyContinue"
 }
 catch {
@@ -19,12 +18,12 @@ catch {
 }
 
 try {
-    $LogFile = "$Env:ProgramData\Evergreen\Logs\MicrosoftVisualStudioCode$($App.Version).log" -replace " ", ""
+    $LogFile = "$Env:ProgramData\Evergreen\Logs\ShareX$($App.Version).log" -replace " ", ""
     $params = @{
         FilePath     = $OutFile.FullName
-        ArgumentList = "/VERYSILENT /NOCLOSEAPPLICATIONS /NORESTARTAPPLICATIONS /NORESTART /SP- /SUPPRESSMSGBOXES /MERGETASKS=!runcode /LOG=$LogFile"
+        ArgumentList = "/SP- /VERYSILENT /SUPPRESSMSGBOXES /NORESTART /TASKS= /FORCECLOSEAPPLICATIONS /LOGCLOSEAPPLICATIONS /NORESTARTAPPLICATIONS /LOG=$LogFile"
         NoNewWindow  = $true
-        Wait         = $true
+        Wait         = $false
         PassThru     = $true
         ErrorAction  = "Continue"
     }
@@ -35,8 +34,11 @@ catch {
     throw $_.Exception.Message
 }
 
-Start-Sleep -Seconds 5
+Start-Sleep -Seconds 10
 Get-Process -ErrorAction "SilentlyContinue" | `
-    Where-Object { $_.Path -like "$Env:ProgramFiles\Microsoft VS Code\*" } | `
+    Where-Object { $_.Path -like "$Env:ProgramFiles\ShareX\*" } | `
     Stop-Process -Force -ErrorAction "SilentlyContinue"
+$Shortcuts = @("$Env:Public\Desktop\ShareX.lnk",
+    "$Env:ProgramData\Microsoft\Windows\Start Menu\Programs\ShareX\Uninstall ShareX.lnk")
+Remove-Item -Path $Shortcuts -Force -ErrorAction "Ignore"
 #endregion

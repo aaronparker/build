@@ -1,8 +1,8 @@
-#description: Installs the supported Microsoft Visual C++ Redistributables
+#description: Installs the supported Microsoft Visual C++ Redistributables (2012, 2013, 2022)
 #execution mode: Combined
 #tags: VcRedist, Microsoft
 #Requires -Modules VcRedist
-[System.String] $Path = "$env:SystemDrive\Apps\Microsoft\VcRedist"
+[System.String] $Path = "$Env:SystemDrive\Apps\Microsoft\VcRedist"
 
 #region Script logic
 New-Item -Path $Path -ItemType "Directory" -Force -ErrorAction "SilentlyContinue" | Out-Null
@@ -13,10 +13,11 @@ try {
     Save-VcRedist -VcList (Get-VcList) -Path $Path | Out-Null
 }
 catch {
-    throw $_
+    throw $_.Exception.Message
 }
 
 try {
+    Write-Information -MessageData ":: Install Microsoft Visual C++ Redistributables" -InformationAction "Continue"
     Install-VcRedist -VcList (Get-VcList) -Path $Path -Silent | Out-Null
 }
 catch {
