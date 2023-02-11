@@ -1,7 +1,9 @@
-#description: Installs all available Windows updates with PSWindowsUpdate
-#execution mode: IndividualWithRestart
-#tags: Update, Image
 #Requires -Modules PSWindowsUpdate
+<#
+    Installs all available Windows updates with PSWindowsUpdate
+#>
+[CmdletBinding()]
+param ()
 
 try {
     # Delete the policy setting created by MDT

@@ -1,8 +1,11 @@
-#description: Installs the latest Google Chrome 64-bit with automatic updates disabled
-#execution mode: Combined
-#tags: Evergreen, Google, Chrome
 #Requires -Modules Evergreen
-[System.String] $Path = "$Env:SystemDrive\Apps\Google\Chrome"
+<#
+    Installs the latest Google Chrome 64-bit with automatic updates disabled
+#>
+[CmdletBinding()]
+param (
+    [System.String] $Path = "$Env:SystemDrive\Apps\Google\Chrome"
+)
 
 # Configure policies for roaming and cache
 # https://cloud.google.com/blog/products/chrome-enterprise/configuring-chrome-browser-in-your-vdi-environment

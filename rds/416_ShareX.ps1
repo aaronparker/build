@@ -1,8 +1,11 @@
-#description: Installs the latest version of ShareX
-#execution mode: Combined
-#tags: Evergreen, ShareX
 #Requires -Modules Evergreen
-[System.String] $Path = "$Env:SystemDrive\Apps\ShareX"
+<#
+    Installs the latest version of ShareX
+#>
+[CmdletBinding()]
+param (
+    [System.String] $Path = "$Env:SystemDrive\Apps\ShareX"
+)
 
 #region Script logic
 New-Item -Path $Path -ItemType "Directory" -Force -ErrorAction "SilentlyContinue" | Out-Null

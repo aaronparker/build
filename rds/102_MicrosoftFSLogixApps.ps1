@@ -1,8 +1,12 @@
-#description: Installs the latest Microsoft FSLogix Apps agent and the FSLogix Apps Rules Editor
-#execution mode: Combined
-#tags: Evergreen, Microsoft, FSLogix
 #Requires -Modules Evergreen
-[System.String] $Path = "$Env:SystemDrive\Apps\Microsoft\FSLogix"
+<#
+    Installs the latest Microsoft FSLogix Apps agent and the FSLogix Apps Rules Editor
+#>
+[CmdletBinding()]
+param (
+    [System.String] $Path = "$Env:SystemDrive\Apps\Microsoft\FSLogix",
+    [System.String] $FSLogixAgentVersion
+)
 
 #region Agent history - allow installing a specific version in the event of an issue
 $Versions = @"
@@ -45,13 +49,13 @@ try {
     Import-Module -Name "Evergreen" -Force
 
     # Use Secure variables in Nerdio Manager to pass variables
-    if ($null -eq $SecureVars.FSLogixAgentVersion) {
+    if ($null -eq $FSLogixAgentVersion) {
         # Use Evergreen to find the latest version
         $App = Invoke-EvergreenApp -Name "MicrosoftFSLogixApps" | Where-Object { $_.Channel -eq "Production" } | Select-Object -First 1
     }
     else {
         # Use the JSON in this script to select a specific version
-        $App = $Versions | ConvertFrom-Json | Where-Object { $_.Version -eq $SecureVars.FSLogixAgentVersion }
+        $App = $Versions | ConvertFrom-Json | Where-Object { $_.Version -eq $FSLogixAgentVersion }
     }
 
     $OutFile = Save-EvergreenApp -InputObject $App -CustomPath $Path -WarningAction "SilentlyContinue"

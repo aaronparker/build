@@ -1,8 +1,11 @@
-#description: Installs Cisco WebEx VDI client with automatic updates disabled. URL to the installer is hard coded in this script.
-#execution mode: Combined
-#tags: Evergreen, Cisco, WebEx
 #Requires -Modules Evergreen
-[System.String] $Path = "$Env:SystemDrive\Apps\Cisco\WebEx"
+<#
+    Installs Cisco WebEx VDI client with automatic updates disabled. URL to the installer is hard coded in this script.
+#>
+[CmdletBinding()]
+param (
+    [System.String] $Path = "$Env:SystemDrive\Apps\Cisco\WebEx"
+)
 
 # https://www.webex.com/downloads/teams-vdi.html
 # https://www.cisco.com/c/en/us/td/docs/voice_ip_comm/cloudCollaboration/wbxt/vdi/wbx-vdi-deployment-guide/wbx-teams-vdi-deployment_chapter_010.html

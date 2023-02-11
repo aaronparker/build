@@ -1,8 +1,11 @@
-#description: Installs the latest Microsoft Visual Studio Code 64-bit
-#execution mode: Combined
-#tags: Evergreen, Microsoft, Visual Studio Code
 #Requires -Modules Evergreen
-[System.String] $Path = "$Env:SystemDrive\Apps\Microsoft\VisualStudioCode"
+<#
+    Installs the latest Microsoft Visual Studio Code 64-bit
+#>
+[CmdletBinding()]
+param (
+    [System.String] $Path = "$Env:SystemDrive\Apps\Microsoft\VisualStudioCode"
+)
 
 #region Script logic
 New-Item -Path $Path -ItemType "Directory" -Force -ErrorAction "SilentlyContinue" | Out-Null

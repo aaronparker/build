@@ -1,8 +1,11 @@
-#description: Installs the latest version of draw.io
-#execution mode: Combined
-#tags: Evergreen, draw.io
 #Requires -Modules Evergreen
-[System.String] $Path = "$Env:SystemDrive\Apps\draw.io"
+<#
+    Installs the latest version of draw.io
+#>
+[CmdletBinding()]
+param (
+    [System.String] $Path = "$Env:SystemDrive\Apps\draw.io"
+)
 
 #region Script logic
 New-Item -Path $Path -ItemType "Directory" -Force -ErrorAction "SilentlyContinue" | Out-Null

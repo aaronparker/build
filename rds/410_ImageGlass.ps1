@@ -1,8 +1,11 @@
-#description: Installs the latest version of ImageGlass 64-bit
-#execution mode: Combined
-#tags: Evergreen, ImageGlass
 #Requires -Modules Evergreen
-[System.String] $Path = "$Env:SystemDrive\Apps\ImageGlass"
+<#
+    Installs the latest version of ImageGlass 64-bit
+#>
+[CmdletBinding()]
+param (
+    [System.String] $Path = "$Env:SystemDrive\Apps\ImageGlass"
+)
 
 #region Script logic
 New-Item -Path $Path -ItemType "Directory" -Force -ErrorAction "SilentlyContinue" | Out-Null

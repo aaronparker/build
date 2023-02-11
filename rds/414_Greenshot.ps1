@@ -1,8 +1,11 @@
-#description: Installs the latest version of Greenshot
-#execution mode: Combined
-#tags: Evergreen, Greenshot
 #Requires -Modules Evergreen
-[System.String] $Path = "$Env:SystemDrive\Apps\Greenshot"
+<#
+    Installs the latest version of Greenshot
+#>
+[CmdletBinding()]
+param (
+    [System.String] $Path = "$Env:SystemDrive\Apps\Greenshot"
+)
 
 #region Script logic
 New-Item -Path $Path -ItemType "Directory" -Force -ErrorAction "SilentlyContinue" | Out-Null

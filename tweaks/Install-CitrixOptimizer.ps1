@@ -1,8 +1,12 @@
-#description: Downloads Citrix Optimizer and optimises the OS
-#execution mode: Combined
-#tags: Image, Optimise
 #Requires -Modules Evergreen
-[System.String] $Path = "$Env:SystemDrive\Apps\Citrix\Optimizer"
+<#
+    Downloads Citrix Optimizer and optimises the OS
+#>
+[CmdletBinding()]
+param (
+    [System.String] $Path = "$Env:SystemDrive\Apps\Citrix\Optimizer",
+    [System.String] $CitrixOptimizerUrl  ="https://github.com/aaronparker/packer/raw/main/build/tools/CitrixOptimizerTool.zip"
+)
 
 #region Script logic
 New-Item -Path $Path -ItemType "Directory" -Force -ErrorAction "SilentlyContinue" | Out-Null
@@ -45,7 +49,7 @@ try {
     # Download Citrix Optimizer, specify a secure variable named CitrixOptimizerUrl to pass a custom URL
     $App = [PSCustomObject]@{
         Version = "3.1.0.3"
-        URI     = if ($null -eq $SecureVars.CitrixOptimizerUrl) { "https://github.com/aaronparker/packer/raw/main/build/tools/CitrixOptimizerTool.zip" } else { $SecureVars.CitrixOptimizerUrl }
+        URI     = $CitrixOptimizerUrl
     }
     $OutFile = Save-EvergreenApp -InputObject $App -CustomPath $Path -WarningAction "SilentlyContinue"
 }

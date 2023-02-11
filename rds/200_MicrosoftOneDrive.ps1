@@ -1,8 +1,11 @@
-#description: Installs the latest Microsoft OneDrive per-machine for use on Windows 10/11 multi-session or Windows Server
-#execution mode: Combined
-#tags: Evergreen, Microsoft, OneDrive, per-machine
 #Requires -Modules Evergreen
-[System.String] $Path = "$Env:SystemDrive\Apps\Microsoft\OneDrive"
+<#
+    Installs the latest Microsoft OneDrive per-machine for use on Windows 10/11 multi-session or Windows Server
+#>
+[CmdletBinding()]
+param (
+    [System.String] $Path = "$Env:SystemDrive\Apps\Microsoft\OneDrive"
+)
 
 #region Script logic
 New-Item -Path $Path -ItemType "Directory" -Force -ErrorAction "SilentlyContinue" | Out-Null

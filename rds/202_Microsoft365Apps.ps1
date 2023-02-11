@@ -1,19 +1,12 @@
-#description: Installs the latest Microsoft 365 Apps for Enterprise, Current channel, 64-bit with shared computer licensing and updates disabled
-#execution mode: Combined
-#tags: Evergreen, Microsoft, Microsoft 365 Apps
 #Requires -Modules Evergreen
-[System.String] $Path = "$Env:SystemDrive\Apps\Microsoft\Office"
-
-#region Use Secure variables in Nerdio Manager to pass variables
-if ($null -eq $SecureVars.M365Channel) {
-    #[ValidateSet("BetaChannel", "CurrentPreview", "Current", "MonthlyEnterprise", "PerpetualVL2021", "SemiAnnualPreview", "SemiAnnual", "PerpetualVL2019")]
+<#
+    Installs the latest Microsoft 365 Apps for Enterprise, Current channel, 64-bit with shared computer licensing and updates disabled
+#>
+[CmdletBinding()]
+param (
+    [System.String] $Path = "$Env:SystemDrive\Apps\Microsoft\Office",
     [System.String] $Channel = "MonthlyEnterprise"
-}
-else {
-    [System.String] $Channel = $SecureVars.M365Channel
-}
-#endregion
-
+)
 
 #region Script logic
 New-Item -Path $Path -ItemType "Directory" -Force -ErrorAction "SilentlyContinue" | Out-Null

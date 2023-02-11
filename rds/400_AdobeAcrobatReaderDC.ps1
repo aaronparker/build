@@ -1,10 +1,13 @@
-#description: Installs the latest Adobe Acrobat Reader MUI 64-bit with automatic updates disabled
-#execution mode: Combined
-#tags: Evergreen, Adobe, Acrobat, PDF
 #Requires -Modules Evergreen
-[System.String] $Path = "$Env:SystemDrive\Apps\Adobe\AcrobatReaderDC"
-[System.String] $Architecture = "x64"
-[System.String] $Language = "MUI"
+<#
+    Installs the latest Adobe Acrobat Reader MUI 64-bit with automatic updates disabled
+#>
+[CmdletBinding()]
+param (
+    [System.String] $Path = "$Env:SystemDrive\Apps\Adobe\AcrobatReaderDC",
+    [System.String] $Architecture = "x64",
+    [System.String] $Language = "MUI"
+)
 
 #region Script logic
 New-Item -Path $Path -ItemType "Directory" -Force -ErrorAction "SilentlyContinue" | Out-Null

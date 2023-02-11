@@ -1,17 +1,12 @@
-#description: Installs the latest version of Mozilla Firefox 64-bit with automatic update disabled
-#execution mode: Combined
-#tags: Evergreen, Mozilla, Firefox
 #Requires -Modules Evergreen
-[System.String] $Path = "$Env:SystemDrive\Apps\Mozilla\Firefox"
-
-#region Use Secure variables in Nerdio Manager to pass a language
-if ($null -eq $SecureVars.FirefoxLanguage) {
+<#
+    Installs the latest version of Mozilla Firefox 64-bit with automatic update disabled
+#>
+[CmdletBinding()]
+param (
+    [System.String] $Path = "$Env:SystemDrive\Apps\Mozilla\Firefox",
     [System.String] $Language = "en-US"
-}
-else {
-    [System.String] $Language = $SecureVars.FirefoxLanguage
-}
-#endregion
+)
 
 #region Script logic
 New-Item -Path $Path -ItemType "Directory" -Force -ErrorAction "SilentlyContinue" | Out-Null

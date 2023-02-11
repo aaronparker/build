@@ -1,8 +1,11 @@
-#description: Installs the latest Zoom Meetings VDI client
-#execution mode: Combined
-#tags: Evergreen, Zoom
 #Requires -Modules Evergreen
-[System.String] $Path = "$Env:SystemDrive\Apps\Zoom\Meetings"
+<#
+    Installs the latest Zoom Meetings VDI client
+#>
+[CmdletBinding()]
+param (
+    [System.String] $Path = "$Env:SystemDrive\Apps\Zoom\Meetings"
+)
 
 #region Script logic
 New-Item -Path $Path -ItemType "Directory" -Force -ErrorAction "SilentlyContinue" | Out-Null

@@ -1,6 +1,8 @@
-#description: Configures Windows roles, features and capabilities. Enable/disable Windows roles and features
-#execution mode: IndividualWithRestart
-#tags: Roles, Features, Capabilities, Image
+<#
+    Configures Windows roles, features and capabilities. Enable/disable Windows roles and features
+#>
+[CmdletBinding()]
+param ()
 
 #region Script logic
 # Add / Remove roles and features (requires reboot at end of deployment)

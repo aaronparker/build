@@ -1,8 +1,11 @@
-#description: Installs the latest Microsoft PowerToys. Requires the Microsoft .NET Runtime
-#execution mode: Combined
-#tags: Evergreen, Microsoft, PowerToys
 #Requires -Modules Evergreen
-[System.String] $Path = "$Env:SystemDrive\Apps\Microsoft\PowerToys"
+<#
+    Installs the latest Microsoft PowerToys. Requires the Microsoft .NET Runtime
+#>
+[CmdletBinding()]
+param (
+    [System.String] $Path = "$Env:SystemDrive\Apps\Microsoft\PowerToys"
+)
 
 #region Script logic
 New-Item -Path $Path -ItemType "Directory" -Force -ErrorAction "SilentlyContinue" | Out-Null

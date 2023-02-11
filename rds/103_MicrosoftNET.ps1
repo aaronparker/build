@@ -1,8 +1,11 @@
-#description: Installs the Microsoft .NET Desktop LTS and Current Runtimes
-#execution mode: Combined
-#tags: Evergreen, Microsoft, .NET
 #Requires -Modules Evergreen
-[System.String] $Path = "$Env:SystemDrive\Apps\Microsoft\NET"
+<#
+    Installs the Microsoft .NET Desktop LTS and Current Runtimes
+#>
+[CmdletBinding()]
+param (
+    [System.String] $Path = "$Env:SystemDrive\Apps\Microsoft\NET"
+)
 
 #region Script logic
 New-Item -Path $Path -ItemType "Directory" -Force -ErrorAction "SilentlyContinue" | Out-Null

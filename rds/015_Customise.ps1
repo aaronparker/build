@@ -1,24 +1,13 @@
-#description: Installs Windows Customised Defaults to customise the image and the default profile https://stealthpuppy.com/image-customise/
-#execution mode: Combined
-#tags: Evergreen, Customisation, Language, Image
 #Requires -Modules Evergreen
-[System.String] $Path = "$Env:SystemDrive\Apps\image-customise"
-
-#region Use Secure variables in Nerdio Manager to pass variables
-if ($null -eq $SecureVars.OSLanguage) {
-    [System.String] $Language = "en-AU"
-}
-else {
-    [System.String] $Language = $SecureVars.OSLanguage
-}
-
-if ($null -eq $SecureVars.AppxMode) {
-    $AppxMode = "Block"
-}
-else {
-    $AppxMode = $SecureVars.AppxMode
-}
-#endregion
+<#
+    Installs Windows Customised Defaults to customise the image and the default profile https://stealthpuppy.com/image-customise/
+#>
+[CmdletBinding()]
+param (
+    [System.String] $Path = "$Env:SystemDrive\Apps\image-customise",
+    [System.String] $Language = "en-AU",
+    [System.String] $AppxMode = "Block"
+)
 
 #region Script logic
 New-Item -Path $Path -ItemType "Directory" -Force -ErrorAction "SilentlyContinue" | Out-Null

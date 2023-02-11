@@ -1,8 +1,11 @@
-#description: Installs the latest Notepad++ 64-bit with automatic updates disabled.
-#execution mode: Combined
-#tags: Evergreen, Notepad++
 #Requires -Modules Evergreen
-[System.String] $Path = "$Env:SystemDrive\Apps\NotepadPlusPlus"
+<#
+    Installs the latest Notepad++ 64-bit with automatic updates disabled.
+#>
+[CmdletBinding()]
+param (
+    [System.String] $Path = "$Env:SystemDrive\Apps\NotepadPlusPlus"
+)
 
 #region Script logic
 New-Item -Path $Path -ItemType "Directory" -Force -ErrorAction "SilentlyContinue" | Out-Null

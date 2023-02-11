@@ -1,8 +1,11 @@
-#description: Installs the latest 7-Zip ZS 64-bit
-#execution mode: Combined
-#tags: Evergreen, 7-Zip
 #Requires -Modules Evergreen
-[System.String] $Path = "$Env:SystemDrive\Apps\7ZipZS"
+<#
+    Installs the latest 7-Zip ZS 64-bit
+#>
+[CmdletBinding()]
+param (
+    [System.String] $Path = "$Env:SystemDrive\Apps\7ZipZS"
+)
 
 #region Script logic
 New-Item -Path $Path -ItemType "Directory" -Force -ErrorAction "SilentlyContinue" | Out-Null

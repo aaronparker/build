@@ -1,17 +1,12 @@
-#description: Installs the latest Foxit PDF Reader with automatic updates disabled
-#execution mode: Combined
-#tags: Evergreen, Foxit, PDF
 #Requires -Modules Evergreen
-[System.String] $Path = "$Env:SystemDrive\Apps\Foxit\PDFReader"
-
-#region Use Secure variables in Nerdio Manager to pass a language
-if ($null -eq $SecureVars.FoxitLanguage) {
+<#
+    Installs the latest Foxit PDF Reader with automatic updates disabled
+#>
+[CmdletBinding()]
+param (
+    [System.String] $Path = "$Env:SystemDrive\Apps\Foxit\PDFReader",
     [System.String] $Language = "English"
-}
-else {
-    [System.String] $Language = $SecureVars.FoxitLanguage
-}
-#endregion
+)
 
 #region Script logic
 # Create target folder

@@ -1,10 +1,15 @@
-#description: Sets a default Windows 10 Start menu and taskbar layout from a URL passed from  Nerdio secure variables
-#execution mode: Combined
-#tags: Image, Start menu, Taskbar
+<#
+    Sets a default Windows 10 Start menu and taskbar layout from a URL passed from  Nerdio secure variables
+#>
+[CmdletBinding()]
+param (
+	[System.String] $Path = "$Env:SystemDrive\Apps\StartLayout",
+	[System.String] $StartLayout
+)
 
 #region Use Secure variables in Nerdio Manager to pass variables
 # A default Start menu and taskbar layout is included here for local testing
-if ($null -eq $SecureVars.StartLayout) {
+if ($null -eq $StartLayout) {
 	[System.String] $StartLayout = @"
 <?xml version="1.0" encoding="utf-8"?>
 <LayoutModificationTemplate xmlns:defaultlayout="http://schemas.microsoft.com/Start/2014/FullDefaultLayout"
@@ -40,12 +45,11 @@ if ($null -eq $SecureVars.StartLayout) {
 }
 else {
 	# Host the Start menu and taskbar layout on Azure blob storage
-	[System.String] $StartLayoutUrl = $SecureVars.StartLayout
+	[System.String] $StartLayoutUrl = $StartLayout
 }
 #endregion
 
 #region Script logic
-[System.String] $Path = "$Env:SystemDrive\Apps\StartLayout"
 New-Item -Path $Path -ItemType "Directory" -Force -ErrorAction "SilentlyContinue" | Out-Null
 New-Item -Path "$Env:SystemDrive\Users\Default\AppData\Local\Microsoft\Windows\Shell" -ItemType "Directory" -Force -ErrorAction "SilentlyContinue" | Out-Null
 
@@ -55,7 +59,7 @@ if ([System.String]::IsNullOrEmpty($StartLayoutUrl)) {
 		Value       = $StartLayout
 		Encoding    = "Utf8"
 		NoNewLine   = $true
-		Confirm      = $false
+		Confirm     = $false
 		Force       = $true
 		ErrorAction = "Stop"
 	}

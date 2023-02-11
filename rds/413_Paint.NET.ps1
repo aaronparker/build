@@ -1,8 +1,11 @@
-#description: Installs the latest version of Paint.NET 64-bit with automatic update disabled
-#execution mode: Combined
-#tags: Evergreen, Paint.NET
 #Requires -Modules Evergreen
-[System.String] $Path = "$Env:SystemDrive\Apps\Paint.NET"
+<#
+    Installs the latest version of Paint.NET 64-bit with automatic update disabled
+#>
+[CmdletBinding()]
+param (
+    [System.String] $Path = "$Env:SystemDrive\Apps\Paint.NET"
+)
 
 #region Script logic
 New-Item -Path $Path -ItemType "Directory" -Force -ErrorAction "SilentlyContinue" | Out-Null

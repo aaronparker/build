@@ -1,9 +1,13 @@
-#description: Installs the latest Microsoft Teams per-machine for use on Windows 10/11 multi-session or Windows Server
-#execution mode: Combined
-#tags: Evergreen, Microsoft, Teams, per-machine
 #Requires -Modules Evergreen
-[System.String] $Path = "$Env:SystemDrive\Apps\Microsoft\Teams"
-[System.String] $TeamsExe = "${env:ProgramFiles(x86)}\Microsoft\Teams\current\Teams.exe"
+<#
+    Installs the latest Microsoft Teams per-machine for use on Windows 10/11 multi-session or Windows Server
+#>
+[CmdletBinding()]
+param (
+    [System.String] $Path = "$Env:SystemDrive\Apps\Microsoft\Teams",
+    [System.String] $TeamsExe = "${env:ProgramFiles(x86)}\Microsoft\Teams\current\Teams.exe"
+)
+
 
 #region Functions
 function Get-InstalledSoftware {

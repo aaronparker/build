@@ -1,15 +1,11 @@
-#description: Installs Windows language support and sets language/regional settings. Note that this script enables WinRM and PS Remoting to fix an issue with VM deployment using non en-US language packs
-#execution mode: Combined
-#tags: Language, Image
-
-#region Use Secure variables in Nerdio Manager to pass a system language
-if ($null -eq $SecureVars.OSLanguage) {
+<#
+    Installs Windows language support and sets language/regional settings.
+    Note that this script enables WinRM and PS Remoting to fix an issue with VM deployment using non en-US language packs
+#>
+[CmdletBinding()]
+param (
     [System.String] $Language = "en-AU"
-}
-else {
-    [System.String] $Language = $SecureVars.OSLanguage
-}
-#endregion
+)
 
 #region Enable the WinRM rule as a workaround for VM provisioning DSC failure with: "Unable to check the status of the firewall"
 # https://github.com/Azure/RDS-Templates/issues/435

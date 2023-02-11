@@ -1,8 +1,11 @@
-#description: Installs the latest VLC media player 64-bit
-#execution mode: Combined
-#tags: Evergreen, VLC
 #Requires -Modules Evergreen
-[System.String] $Path = "$Env:SystemDrive\Apps\VLC\MediaPlayer"
+<#
+    Installs the latest VLC media player 64-bit
+#>
+[CmdletBinding()]
+param (
+    [System.String] $Path = "$Env:SystemDrive\Apps\VLC\MediaPlayer"
+)
 
 #region Script logic
 New-Item -Path $Path -ItemType "Directory" -Force -ErrorAction "SilentlyContinue" | Out-Null
