@@ -7,9 +7,9 @@
 if ($null -eq $SecureVars.StartLayout) {
 	[System.String] $StartLayout = @"
 <?xml version="1.0" encoding="utf-8"?>
-<LayoutModificationTemplate xmlns:defaultlayout="http://schemas.microsoft.com/Start/2014/FullDefaultLayout" 
-  xmlns:start="http://schemas.microsoft.com/Start/2014/StartLayout" 
-  xmlns:taskbar="http://schemas.microsoft.com/Start/2014/TaskbarLayout" Version="1" 
+<LayoutModificationTemplate xmlns:defaultlayout="http://schemas.microsoft.com/Start/2014/FullDefaultLayout"
+  xmlns:start="http://schemas.microsoft.com/Start/2014/StartLayout"
+  xmlns:taskbar="http://schemas.microsoft.com/Start/2014/TaskbarLayout" Version="1"
   xmlns="http://schemas.microsoft.com/Start/2014/LayoutModification">
   <LayoutOptions StartTileGroupCellWidth="6" />
   <DefaultLayoutOverride>

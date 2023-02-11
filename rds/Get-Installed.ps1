@@ -1,7 +1,7 @@
 <#
 #>
 [Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSAvoidUsingWriteHost", "", Justification="Outputs progress to the pipeline log")]
-[OutputType([System.Management.Automation.PSObject])]
+[OutputType([System.Object[]])]
 [CmdletBinding()]
 param (
     [Parameter()]
