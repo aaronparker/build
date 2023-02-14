@@ -15,6 +15,7 @@ New-Item -Path "$Env:ProgramData\Evergreen\Logs" -ItemType "Directory" -Force -E
 
 # Run tasks/install apps
 # Enforce settings with GPO: https://www.adobe.com/devnet-docs/acrobatetk/tools/AdminGuide/gpo.html
+# https://helpx.adobe.com/au/enterprise/kb/acrobat-64-bit-for-enterprises.html
 
 try {
     # Download Reader installer
@@ -54,6 +55,10 @@ catch {
 }
 
 try {
+    # Force Reader into read-only mode
+    reg add "HKLM\SOFTWARE\Policies\Adobe\Adobe Acrobat\DC\FeatureLockDown" /v "bIsSCReducedModeEnforcedEx" /d 1 /t "REG_DWORD" /f | Out-Null
+    reg add "HKLM\SOFTWARE\Policies\Adobe\Adobe Acrobat\DC\FeatureLockDown\cIPM" /v "bDontShowMsgWhenViewingDoc" /d 0 /t "REG_DWORD" /f | Out-Null
+
     # Disable update tasks - assuming we're installing on a gold image or updates will be managed
     Get-Service -Name "AdobeARMservice" -ErrorAction "SilentlyContinue" | Set-Service -StartupType "Disabled" -ErrorAction "SilentlyContinue"
     Get-ScheduledTask -TaskName "Adobe Acrobat Update Task*" | Unregister-ScheduledTask -Confirm:$false -ErrorAction "SilentlyContinue"
